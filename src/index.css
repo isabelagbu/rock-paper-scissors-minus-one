@@ -51,6 +51,29 @@ body {
   text-align: center;
 }
 
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  transition: transform 1s ease, opacity 1s ease;
+}
+
+.fly-up {
+  transform: translateY(-200%); /* Move up and shrink slightly */
+  opacity: 0;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: transform 1s ease, opacity 1s ease;
+}
+
+.fly-down {
+  transform: translateY(100%); /* Move buttons down */
+  opacity: 0;
+}
+
 h1 {
   font-size: 2.5rem;
   margin-bottom: 20px;
@@ -90,4 +113,209 @@ button:hover {
 button:active {
   transform: translateY(2px);
   box-shadow: 0px 4px 6px var(--button-shadow), inset 0px -2px 4px rgba(255, 255, 255, 0.2);
+}
+
+
+.left-container,
+.right-container {
+  position: absolute;
+  top: 5%; /* Center vertically */
+  display: flex;
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  gap: 0; /* Space between the images */
+}
+.left-container {
+  left: 0; /* Attach to the extreme left */
+  align-items: flex-start;
+}
+
+.right-container {
+  right: 0; /* Attach to the extreme right */
+  align-items: flex-end;
+}
+
+.game-image {
+  max-width: 70%; /* Adjust size as needed */
+}
+
+/* General tile container styles */
+.tile-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  background-color: var(--button-bg); /* Use Squid Game theme color */
+  color: var(--button-text-color);
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 2px solid var(--button-border-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.tile p {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.tile span {
+  margin-top: 5px;
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: #f0f0f0;
+}
+
+.tile:hover {
+  transform: scale(1.1);
+  background-color: var(--button-hover-bg);
+}
+
+/* Left-side controls */
+.left-controls {
+  bottom: 20px; /* Distance from the bottom */
+  left: 20px; /* Attach to the left */
+}
+
+/* Right-side controls */
+.right-controls {
+  bottom: 20px; /* Distance from the bottom */
+  right: 20px; /* Attach to the right */
+}
+/* Countdown Display */
+.countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+  animation: fadeInOut 1s ease-in-out;
+}
+
+/* Smooth fade in and out animation */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+}
+
+@keyframes move-left-hands {
+  0%, 100% {
+    transform: translateY(0); /* Original position */
+  }
+  25% {
+    transform: translateY(-10px); /* Slight inward movement */
+  }
+  50% {
+    transform: translateY(-20px); /* Maximum outward movement */
+  }
+  75% {
+    transform: translateY(-10px); /* Return slightly inward */
+  }
+}
+
+@keyframes move-right-hands {
+  0%, 100% {
+    transform: translateY(0); /* Original position */
+  }
+  25% {
+    transform: translateY(10px); /* Slight inward movement */
+  }
+  50% {
+    transform: translateY(20px); /* Maximum outward movement */
+  }
+  75% {
+    transform: translateY(10px); /* Return slightly inward */
+  }
+}
+
+.hand-move-left {
+  animation: move-left-hands 0.5s ease-in-out 3;
+  will-change: transform; /* Optimize rendering */
+}
+
+.hand-move-right {
+  animation: move-right-hands 0.5s ease-in-out 3;
+  will-change: transform; /* Optimize rendering */
+}
+
+.game-image {
+  position: relative;
+  display: block;
+}
+
+.timer-bar-container {
+  position: absolute;
+  bottom: 0; /* Fix to the bottom of the screen */
+  left: 0;
+  width: 100%; /* Full width */
+  height: 10px; /* Reserve space for the timer */
+  overflow: hidden; /* Prevent content overflow */
+}
+
+.timer-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 10px;
+  width: 100%; /* Start with full width */
+  background-color: red;
+  border-radius: 5px; /* Rounded edges */
+  opacity: 0; /* Hidden initially */
+  transition: opacity 0.3s ease, transform 5s linear; /* Smooth appearance and shrinking */
+  transform: scaleX(1); /* Start fully expanded */
+  transform-origin: left; /* Shrink from the left side */
+}
+
+.timer-bar.visible {
+  opacity: 1; /* Make the timer visible */
+  transform: scaleX(0); /* Shrink to 0 width */
+}
+
+.make-choice-text {
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Perfect centering */
+  font-size: 2.5rem; /* Adjust font size */
+  font-weight: bold;
+  color: white; /* Ensure text visibility */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Optional shadow for better visibility */
+  z-index: 100; /* Ensure above other elements */
+  opacity: 1; /* Fully visible */
+  transition: opacity 0.3s ease-in-out; /* Smooth fade-out */
+}
+
+.make-choice-text.visible {
+  opacity: 1; /* Make text visible */
+}
+
+.make-choice-text.hidden {
+  opacity: 0; /* Invisible */
 }

@@ -1,0 +1,32 @@
+.game-screen {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #101010; /* Game screen background */
+  overflow: hidden;
+}
+
+.left-container,
+.right-container {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between the images */
+}
+
+.left-container {
+  left: 0; /* Attach to the extreme left */
+  align-items: flex-start;
+}
+
+.right-container {
+  right: 0; /* Attach to the extreme right */
+  align-items: flex-end;
+}
+
+.game-image {
+  width: 100px; /* Adjust size as needed */
+}
+
