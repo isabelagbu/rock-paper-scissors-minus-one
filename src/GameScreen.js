@@ -1,112 +1,158 @@
 import React, { useEffect, useState } from "react";
-import "./index.css"; // Ensure this file contains styles for GameScreen
+import "./index.css";
+
+function Countdown({ countdown }) {
+  return countdown ? <div className="countdown">{countdown}</div> : null;
+}
+
+function GameUI({ animateHands, leftHandImage, rightHandImage }) {
+  return (
+    <div className="game-ui">
+      <div className={`left-container ${animateHands ? "hand-move-left" : ""}`}>
+        <img src={leftHandImage} alt="Left Hand" className="game-image" />
+        <img src={rightHandImage} alt="Right Hand" className="game-image" />
+      </div>
+      <div className={`right-container ${animateHands ? "hand-move-right" : ""}`}>
+        <img src="/hands/right_righthand_rock.png" alt="Right Hand" className="game-image" />
+        <img src="/hands/right_lefthand_rock.png" alt="Left Hand" className="game-image" />
+      </div>
+    </div>
+  );
+}
+
+function Controls({ selectedLeftHand, selectedRightHand }) {
+  return (
+    <div className="controls">
+      <div className="tile-container top-left-controls">
+        <div className={`tile ${selectedLeftHand === "Q" ? "active" : ""}`}>
+          <p>Q</p>
+          <span>Rock</span>
+        </div>
+        <div className={`tile ${selectedLeftHand === "W" ? "active" : ""}`}>
+          <p>W</p>
+          <span>Paper</span>
+        </div>
+        <div className={`tile ${selectedLeftHand === "E" ? "active" : ""}`}>
+          <p>E</p>
+          <span>Scissors</span>
+        </div>
+      </div>
+      <div className="tile-container bottom-left-controls">
+        <div className={`tile ${selectedRightHand === "A" ? "active" : ""}`}>
+          <p>A</p>
+          <span>Rock</span>
+        </div>
+        <div className={`tile ${selectedRightHand === "S" ? "active" : ""}`}>
+          <p>S</p>
+          <span>Paper</span>
+        </div>
+        <div className={`tile ${selectedRightHand === "D" ? "active" : ""}`}>
+          <p>D</p>
+          <span>Scissors</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TimerBar({ showTimer }) {
+  return (
+    <div className="timer-bar-container">
+      <div className={`timer-bar ${showTimer ? "visible" : ""}`}></div>
+    </div>
+  );
+}
 
 function GameScreen() {
-  const [countdown, setCountdown] = useState(3); // Start the countdown from 3
-  const [animateHands, setAnimateHands] = useState(false); // Toggle hand movement
-  const [showTimer, setShowTimer] = useState(false); // Toggle timer visibility
+  const [countdown, setCountdown] = useState(3);
+  const [animateHands, setAnimateHands] = useState(false);
+  const [showTimer, setShowTimer] = useState(false);
+  const [leftHandImage, setLeftHandImage] = useState("/hands/left_lefthand_rock.png");
+  const [rightHandImage, setRightHandImage] = useState("/hands/left_righthand_rock.png");
+  const [selectedLeftHand, setSelectedLeftHand] = useState(null);
+  const [selectedRightHand, setSelectedRightHand] = useState(null);
+
+  const playerLeftHandImages = {
+    Q: "/hands/left_lefthand_rock.png",
+    W: "/hands/left_righthand_paper.png",
+    E: "/hands/left_righthand_scissors.png",
+  };
+  const playerRightHandImages = {
+    A: "/hands/left_righthand_rock.png",
+    S: "/hands/left_righthand_paper.png",
+    D: "/hands/left_righthand_scissors.png",
+  };
 
   useEffect(() => {
-    const gameSound1 = new Audio("/robot.mp3"); // First sound
-    const gameSound2 = new Audio("/squid_game.mp3"); // Second sound
-    const beepSound = new Audio("/beeps.mp3"); // Beep sound for the countdown
+    const gameSound1 = new Audio("/robot.mp3");
+    const gameSound2 = new Audio("/squid_game.mp3");
+    const beepSound = new Audio("/beeps.mp3");
 
-    // Play the first sound
     gameSound1.play();
 
-    // Set up an event listener to play the second sound after the first ends
     gameSound1.addEventListener("ended", () => {
       gameSound2.play();
     });
 
-    // Countdown logic with beeps
     const countdownInterval = setInterval(() => {
       setCountdown((prev) => {
         if (prev > 1) {
-          beepSound.play(); // Play beep for each number
+          beepSound.currentTime = 0;
+          beepSound.play();
           return prev - 1;
         } else if (prev === 1) {
-          beepSound.play(); // Play beep for "Go!"
+          beepSound.currentTime = 0;
+          beepSound.play();
           return "Go!";
         } else {
-          clearInterval(countdownInterval); // Clear the interval
+          clearInterval(countdownInterval);
+          setCountdown(null);
+          setAnimateHands(true);
+          setShowTimer(true);
+
+          // Immediately update images when the timer ends
+          setLeftHandImage(playerLeftHandImages[selectedLeftHand] || "/hands/left_lefthand_rock.png");
+          setRightHandImage(playerRightHandImages[selectedRightHand] || "/hands/left_righthand_rock.png");
+
           setTimeout(() => {
-            setCountdown(null); // Remove countdown after "Go!" is displayed
-            setAnimateHands(true); // Start hand animations
-            setTimeout(() => {
-              setShowTimer(true); // Show timer after animation
-              // Automatically hide timer after 5 seconds
-              setTimeout(() => setShowTimer(false), 5000);
-            }, 2000);
-          }, 500);
+            setShowTimer(false); // Hide timer after 4 seconds
+          }, 4000);
+
           return prev;
         }
       });
     }, 1000);
 
-    return () => {
-      // Clean up event listeners and interval
-      gameSound1.removeEventListener("ended", () => {
-        gameSound2.play();
-      });
-      clearInterval(countdownInterval);
+    return () => clearInterval(countdownInterval);
+  }, [selectedLeftHand, selectedRightHand]);
+
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      const key = event.key.toUpperCase();
+
+      if (showTimer) {
+        if (["Q", "W", "E"].includes(key)) {
+          setSelectedLeftHand(key);
+        } else if (["A", "S", "D"].includes(key)) {
+          setSelectedRightHand(key);
+        }
+      }
     };
-  }, []);
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [showTimer]);
 
   return (
     <div className="game-screen">
-      {/* Countdown Display */}
-      {countdown && <div className="countdown">{countdown}</div>}
-
-      {/* Game UI */}
-      <div className={`left-container ${animateHands ? "hand-move-left" : ""}`}>
-        <img src="/hands/left_lefthand_rock.png" alt="Rock" className="game-image" />
-        <img src="/hands/left_righthand_rock.png" alt="Rock" className="game-image" />
-      </div>
-      <div className={`right-container ${animateHands ? "hand-move-right" : ""}`}>
-        <img src="/hands/right_righthand_rock.png" alt="Rock" className="game-image" />
-        <img src="/hands/right_lefthand_rock.png" alt="Rock" className="game-image" />
-      </div>
-
-      {/* Left-side controls */}
-      <div className="tile-container left-controls">
-        <div className="tile">
-          <p>A</p>
-          <span>Rock</span>
-        </div>
-        <div className="tile">
-          <p>S</p>
-          <span>Paper</span>
-        </div>
-        <div className="tile">
-          <p>D</p>
-          <span>Scissors</span>
-        </div>
-      </div>
-
-      {/* Right-side controls */}
-      <div className="tile-container right-controls">
-        <div className="tile">
-          <p>J</p>
-          <span>Rock</span>
-        </div>
-        <div className="tile">
-          <p>K</p>
-          <span>Paper</span>
-        </div>
-        <div className="tile">
-          <p>L</p>
-          <span>Scissors</span>
-        </div>
-      </div>
-
-      {/* Display 'Make Your Choice' During Timer */}
+      <Countdown countdown={countdown} />
+      <GameUI animateHands={animateHands} leftHandImage={leftHandImage} rightHandImage={rightHandImage} />
+      <Controls selectedLeftHand={selectedLeftHand} selectedRightHand={selectedRightHand} />
       {showTimer && <div className="make-choice-text">Make Your Choice</div>}
-
-      {/* Timer Bar */}
-      <div className="timer-bar-container">
-        <div className={`timer-bar ${showTimer ? "visible" : ""}`}></div>
-      </div>
+      <TimerBar showTimer={showTimer} />
     </div>
   );
 }
