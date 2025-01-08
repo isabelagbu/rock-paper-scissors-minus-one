@@ -5,7 +5,7 @@ function Countdown({ countdown }) {
   return countdown ? <div className="countdown">{countdown}</div> : null;
 }
 
-function GameUI({ animateHands, leftHandImage, rightHandImage }) {
+function GameUI({ animateHands, leftHandImage, rightHandImage, aiLeftHandImage, aiRightHandImage }) {
   return (
     <div className="game-ui">
       <div className={`left-container ${animateHands ? "hand-move-left" : ""}`}>
@@ -13,8 +13,8 @@ function GameUI({ animateHands, leftHandImage, rightHandImage }) {
         <img src={rightHandImage} alt="Right Hand" className="game-image" />
       </div>
       <div className={`right-container ${animateHands ? "hand-move-right" : ""}`}>
-        <img src="/hands/right_righthand_rock.png" alt="Right Hand" className="game-image" />
-        <img src="/hands/right_lefthand_rock.png" alt="Left Hand" className="game-image" />
+        <img src={aiLeftHandImage} alt="Right Hand" className="game-image" />
+        <img src={aiRightHandImage}  alt="Left Hand" className="game-image" />
       </div>
     </div>
   );
@@ -65,71 +65,114 @@ function TimerBar({ showTimer }) {
 
 function GameScreen() {
   const [countdown, setCountdown] = useState(3);
+  const [playMusic, setPlayMusic] = useState(true);
+  const [playRound, setPlayRound] = useState(false);
   const [animateHands, setAnimateHands] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
   const [leftHandImage, setLeftHandImage] = useState("/hands/left_lefthand_rock.png");
   const [rightHandImage, setRightHandImage] = useState("/hands/left_righthand_rock.png");
+  const [aiLeftHandImage, setAILeftHandImage] = useState("/hands/right_lefthand_rock.png");
+  const [aiRightHandImage, setAIRightHandImage] = useState("/hands/right_righthand_rock.png");
   const [selectedLeftHand, setSelectedLeftHand] = useState(null);
   const [selectedRightHand, setSelectedRightHand] = useState(null);
+  const [aiSelectedLeftHand, setAISelectedLeftHand] = useState(null);
+  const [aiSelectedRightHand, setAISelectedRightHand] = useState(null);
+  const [playerDone, setPlayerDone] = useState(false); 
 
   const playerLeftHandImages = {
     Q: "/hands/left_lefthand_rock.png",
     W: "/hands/left_righthand_paper.png",
     E: "/hands/left_righthand_scissors.png",
   };
+
   const playerRightHandImages = {
     A: "/hands/left_righthand_rock.png",
     S: "/hands/left_righthand_paper.png",
     D: "/hands/left_righthand_scissors.png",
   };
 
+  const aiLeftHandImages = {
+    Q: "/hands/right_lefthand_rock.png",
+    W: "/hands/right_lefthand_paper.png",
+    E: "/hands/right_lefthand_scissors.png",
+  };
+
+  const aiRightHandImages = {
+    A: "/hands/right_righthand_rock.png",
+    S: "/hands/right_lefthand_paper.png",
+    D: "/hands/right_lefthand_scissors.png",
+  };
+
+  // AI Logic: Randomly choose from valid keys for each hand
+  const generateAiChoice = (choices) => {
+    return choices[Math.floor(Math.random() * choices.length)];
+  };
+
   useEffect(() => {
-    const gameSound1 = new Audio("/robot.mp3");
-    const gameSound2 = new Audio("/squid_game.mp3");
-    const beepSound = new Audio("/beeps.mp3");
-
-    gameSound1.play();
-
-    gameSound1.addEventListener("ended", () => {
-      gameSound2.play();
+    const robotCountDownSound = new Audio("/robot.mp3");
+    const gameMusic = new Audio("/squid_game.mp3");
+    robotCountDownSound.play();
+    robotCountDownSound.addEventListener("ended", () => {
+      gameMusic.play();
+      setPlayRound(true);
     });
+  }, [playMusic]);
 
+  useEffect(() => {
     const countdownInterval = setInterval(() => {
       setCountdown((prev) => {
         if (prev > 1) {
-          beepSound.currentTime = 0;
-          beepSound.play();
           return prev - 1;
         } else if (prev === 1) {
-          beepSound.currentTime = 0;
-          beepSound.play();
           return "Go!";
         } else {
           clearInterval(countdownInterval);
           setCountdown(null);
-          setAnimateHands(true);
-          setShowTimer(true);
+          setPlayRound(true);
 
-          // Immediately update images when the timer ends
-          setLeftHandImage(playerLeftHandImages[selectedLeftHand] || "/hands/left_lefthand_rock.png");
-          setRightHandImage(playerRightHandImages[selectedRightHand] || "/hands/left_righthand_rock.png");
+          if (playRound) {
+            setAnimateHands(true);
+            setShowTimer(true);
 
-          setTimeout(() => {
-            setShowTimer(false); // Hide timer after 4 seconds
-          }, 4000);
+            let userDone = false;
+            // Player Choices
+            setLeftHandImage(playerLeftHandImages[selectedLeftHand] || "/hands/left_lefthand_rock.png");
+            setRightHandImage(playerRightHandImages[selectedRightHand] || "/hands/left_righthand_rock.png");
+            userDone = true;
 
-          return prev;
+            
+
+            // Generate AI Choices
+            const aiLeftKey = generateAiChoice(["Q", "W", "E"]);
+            const aiRightKey = generateAiChoice(["A", "S", "D"]);
+
+            setAISelectedLeftHand(aiLeftKey);
+            setAISelectedRightHand(aiRightKey);
+
+            if(userDone) {
+               // Update AI Hand Images
+            setAILeftHandImage(aiLeftHandImages[aiLeftKey]);
+            setAIRightHandImage(aiRightHandImages[aiRightKey]);
+            }
+
+            
+           
+
+            setTimeout(() => {
+              setShowTimer(false); // Hide timer after 4 seconds
+            }, 4000);
+            return prev;
+          }
+          setPlayRound(false);
         }
       });
     }, 1000);
-
     return () => clearInterval(countdownInterval);
-  }, [selectedLeftHand, selectedRightHand]);
+  }, [selectedLeftHand, selectedRightHand, playRound]);
 
   useEffect(() => {
     const handleKeyPress = (event) => {
       const key = event.key.toUpperCase();
-
       if (showTimer) {
         if (["Q", "W", "E"].includes(key)) {
           setSelectedLeftHand(key);
@@ -149,7 +192,13 @@ function GameScreen() {
   return (
     <div className="game-screen">
       <Countdown countdown={countdown} />
-      <GameUI animateHands={animateHands} leftHandImage={leftHandImage} rightHandImage={rightHandImage} />
+      <GameUI
+        animateHands={animateHands}
+        leftHandImage={leftHandImage}
+        rightHandImage={rightHandImage}
+        aiLeftHandImage={aiLeftHandImage}
+        aiRightHandImage={aiRightHandImage}
+      />
       <Controls selectedLeftHand={selectedLeftHand} selectedRightHand={selectedRightHand} />
       {showTimer && <div className="make-choice-text">Make Your Choice</div>}
       <TimerBar showTimer={showTimer} />
