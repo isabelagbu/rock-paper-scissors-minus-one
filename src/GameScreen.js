@@ -153,6 +153,102 @@ function GameScreen() {
     D: "/hands/right_lefthand_scissors.png",
   };
 
+  const determineWinner = () => {
+    console.log("Determining winner...");
+    console.log("Player Hand Removed:", handToRemove);
+    console.log("AI Hand Removed:", aiHandToRemove);
+    console.log("Player Selected Left Hand:", selectedLeftHand);
+    console.log("Player Selected Right Hand:", selectedRightHand);
+    console.log("AI Selected Left Hand:", aiSelectedLeftHand);
+    console.log("AI Selected Right Hand:", aiSelectedRightHand);
+  
+    let resultText = "";
+  
+    // Case 1: Both players removed their left hands
+    if (handToRemove === "Q" && aiHandToRemove === "Q") {
+      console.log("Both players removed their left hands.");
+      if (
+        (selectedRightHand === "Q" && aiSelectedRightHand === "E") || // Rock beats Scissors
+        (selectedRightHand === "W" && aiSelectedRightHand === "Q") || // Paper beats Rock
+        (selectedRightHand === "E" && aiSelectedRightHand === "W")    // Scissors beats Paper
+      ) {
+        setPlayerScore((prev) => prev + 1);
+        resultText = "Player wins! Rock beats Scissors.";
+      } else if (selectedRightHand !== aiSelectedRightHand) {
+        setAIScore((prev) => prev + 1);
+        resultText = "AI wins! Paper beats Rock.";
+      } else {
+        resultText = "It's a tie!";
+      }
+    }
+  
+    // Case 2: Player removed left hand, AI removed right hand
+    if (handToRemove === "Q" && aiHandToRemove === "A") {
+      console.log("Player removed left hand, AI removed right hand.");
+      if (
+        (selectedRightHand === "Q" && aiSelectedLeftHand === "E") || // Rock beats Scissors
+        (selectedRightHand === "W" && aiSelectedLeftHand === "Q") || // Paper beats Rock
+        (selectedRightHand === "E" && aiSelectedLeftHand === "W")    // Scissors beats Paper
+      ) {
+        setPlayerScore((prev) => prev + 1);
+        resultText = "Player wins! Rock beats Scissors.";
+      } else if (selectedRightHand !== aiSelectedLeftHand) {
+        setAIScore((prev) => prev + 1);
+        resultText = "AI wins! Paper beats Rock.";
+      } else {
+        resultText = "It's a tie!";
+      }
+    }
+  
+    // Case 3: Player removed right hand, AI removed left hand
+    if (handToRemove === "A" && aiHandToRemove === "Q") {
+      console.log("Player removed right hand, AI removed left hand.");
+      if (
+        (selectedLeftHand === "Q" && aiSelectedRightHand === "E") || // Rock beats Scissors
+        (selectedLeftHand === "W" && aiSelectedRightHand === "Q") || // Paper beats Rock
+        (selectedLeftHand === "E" && aiSelectedRightHand === "W")    // Scissors beats Paper
+      ) {
+        setPlayerScore((prev) => prev + 1);
+        resultText = "Player wins! Scissors beats Paper.";
+      } else if (selectedLeftHand !== aiSelectedRightHand) {
+        setAIScore((prev) => prev + 1);
+        resultText = "AI wins! Rock beats Scissors.";
+      } else {
+        resultText = "It's a tie!";
+      }
+    }
+  
+    // Case 4: Both players removed their right hands
+    if (handToRemove === "A" && aiHandToRemove === "A") {
+      console.log("Both players removed their right hands.");
+      if (
+        (selectedLeftHand === "Q" && aiSelectedLeftHand === "E") || // Rock beats Scissors
+        (selectedLeftHand === "W" && aiSelectedLeftHand === "Q") || // Paper beats Rock
+        (selectedLeftHand === "E" && aiSelectedLeftHand === "W")    // Scissors beats Paper
+      ) {
+        setPlayerScore((prev) => prev + 1);
+        resultText = "Player wins! Paper beats Rock.";
+      } else if (selectedLeftHand !== aiSelectedLeftHand) {
+        setAIScore((prev) => prev + 1);
+        resultText = "AI wins! Scissors beats Paper.";
+      } else {
+        resultText = "It's a tie!";
+      }
+    }
+  
+    console.log("Result Text:", resultText);
+    setScreenText(resultText); // Update the screen text with the result
+  };
+
+  useEffect(() => {
+  if (executeMinusOne && executeAIMinusOne) {
+    determineWinner();
+    setExecuteMinusOne(false);
+    setExecuteAIMinusOne(false);
+    setPlayRound(false);
+  }
+}, [executeMinusOne, executeAIMinusOne]);
+
   // AI Logic: Randomly choose from valid keys for each hand
   const generateAiChoice = (choices) => {
     if (playRound) {
@@ -206,12 +302,19 @@ function GameScreen() {
       aiPlayed.current = true; // Ensure AI logic runs only once per round
 
       // Generate AI Choices
+     // setAISelectedLeftHand();
+     // setAISelectedRightHand();
+
       const aiLeftKey = generateAiChoice(["Q", "W", "E"]);
       const aiRightKey = generateAiChoice(["A", "S", "D"]);
 
+      setAISelectedLeftHand(aiLeftKey);
+      setAISelectedRightHand(aiRightKey);
+
       setTimeout(() => {
-        setAILeftHandImage(aiLeftHandImages[aiLeftKey]);
-        setAIRightHandImage(aiRightHandImages[aiRightKey]);
+     
+       setAILeftHandImage(aiLeftHandImages[aiLeftKey]);
+      setAIRightHandImage(aiRightHandImages[aiRightKey]);
       }, 3000);
 
       setTimeout(() => {
@@ -235,6 +338,7 @@ function GameScreen() {
           if (["Q", "A"].includes(key)) {
             setHandToRemove(key); // Update the hand to remove
             setExecuteAIMinusOne(true); // Trigger AI Minus One after user input
+            aiHandToRemoveFunction();
           }
         }
       };
@@ -248,15 +352,10 @@ function GameScreen() {
     }
   }, [executeMinusOne, showTimer]);
 
-
-  useEffect(() => {
-    if (executeAIMinusOne) {
-      const aiHandToRemoveChoice = generateAiChoice(["Q", "A"]);
-      setAIHandToRemove(aiHandToRemoveChoice); 
-      setScreenText(""); 
-      setExecuteAIMinusOne(false);
-    }
-  }, [executeAIMinusOne]);
+  const aiHandToRemoveFunction = () => {
+    const aiHandToRemoveChoice = generateAiChoice(["Q", "A"]);
+    setAIHandToRemove(aiHandToRemoveChoice); 
+  }
 
   useEffect(() => {
       const handleKeyPress = (event) => {
@@ -298,6 +397,7 @@ function GameScreen() {
         handToRemove={handToRemove}
       />
       {showTimer && <div className="make-choice-text">{screenText}</div>}
+      {handToRemove && aiHandToRemove && <div className="make-choice-text">{screenText}</div>}
       <TimerBar showTimer={showTimer} />
     </div>
   );
