@@ -153,6 +153,8 @@ function GameScreen() {
     D: "/hands/right_lefthand_scissors.png",
   };
 
+
+
   const determineWinner = () => {
     console.log("Determining winner...");
     console.log("Player Hand Removed:", handToRemove);
@@ -164,81 +166,164 @@ function GameScreen() {
   
     let resultText = "";
   
-    // Case 1: Both players removed their left hands
-    if (handToRemove === "Q" && aiHandToRemove === "Q") {
-      console.log("Both players removed their left hands.");
-      if (
-        (selectedRightHand === "Q" && aiSelectedRightHand === "E") || // Rock beats Scissors
-        (selectedRightHand === "W" && aiSelectedRightHand === "Q") || // Paper beats Rock
-        (selectedRightHand === "E" && aiSelectedRightHand === "W")    // Scissors beats Paper
-      ) {
-        setPlayerScore((prev) => prev + 1);
-        resultText = "Player wins! Rock beats Scissors.";
-      } else if (selectedRightHand !== aiSelectedRightHand) {
-        setAIScore((prev) => prev + 1);
-        resultText = "AI wins! Paper beats Rock.";
-      } else {
-        resultText = "It's a tie!";
-      }
+// Q - ROCK
+// W - PAPER
+// E - SCISSORS
+
+// Case 1: Both players removed their left hands
+if (handToRemove === "Q" && aiHandToRemove === "Q") {
+  console.log("Both players removed their left hands.");
+  // SINCE LEFT HAND HAS BEEN REMOVED FOR BOTH, WE WORK WITH THE RIGHT HAND FOR BOTH
+  if (selectedRightHand === "A" && aiSelectedRightHand === "D") {
+    // Player Rock, AI Scissors - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Rock beats Scissors.";
+  } else if (selectedRightHand === "S" && aiSelectedRightHand === "A") {
+    // Player Paper, AI Rock - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Paper beats Rock.";
+  } else if (selectedRightHand === "D" && aiSelectedRightHand === "S") {
+    // Player Scissors, AI Paper - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Scissors beats Paper.";
+  } else if (selectedRightHand === aiSelectedRightHand) {
+    // Tie - Same hand selected
+    resultText = "It's a tie! Both players chose the same hand.";
+  } else {
+    // AI Wins
+    setAIScore((prev) => prev + 1);
+    if (aiSelectedRightHand === "A" && selectedRightHand === "D") {
+      resultText = "AI wins! Rock beats Scissors.";
+    } else if (aiSelectedRightHand === "S" && selectedRightHand === "A") {
+      resultText = "AI wins! Paper beats Rock.";
+    } else if (aiSelectedRightHand === "D" && selectedRightHand === "S") {
+      resultText = "AI wins! Scissors beats Paper.";
     }
+  }
+}
+
   
-    // Case 2: Player removed left hand, AI removed right hand
-    if (handToRemove === "Q" && aiHandToRemove === "A") {
-      console.log("Player removed left hand, AI removed right hand.");
-      if (
-        (selectedRightHand === "Q" && aiSelectedLeftHand === "E") || // Rock beats Scissors
-        (selectedRightHand === "W" && aiSelectedLeftHand === "Q") || // Paper beats Rock
-        (selectedRightHand === "E" && aiSelectedLeftHand === "W")    // Scissors beats Paper
-      ) {
-        setPlayerScore((prev) => prev + 1);
-        resultText = "Player wins! Rock beats Scissors.";
-      } else if (selectedRightHand !== aiSelectedLeftHand) {
-        setAIScore((prev) => prev + 1);
-        resultText = "AI wins! Paper beats Rock.";
-      } else {
-        resultText = "It's a tie!";
-      }
+// Case 2: Player removed left hand, AI removed right hand
+if (handToRemove === "Q" && aiHandToRemove === "A") {
+  console.log("Player removed left hand, AI removed right hand.");
+
+  if (selectedRightHand === "A" && aiSelectedLeftHand === "E") {
+    // Player Rock, AI Scissors - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Rock beats Scissors.";
+  } else if (selectedRightHand === "S" && aiSelectedLeftHand === "Q") {
+    // Player Paper, AI Rock - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Paper beats Rock.";
+  } else if (selectedRightHand === "D" && aiSelectedLeftHand === "W") {
+    // Player Scissors, AI Paper - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Scissors beats Paper.";
+  } else if (selectedRightHand === "A" && aiSelectedLeftHand === "Q") {
+    // Tie - Both choose Rock
+    resultText = "It's a tie! Both chose Rock.";
+  } else if (selectedRightHand === "S" && aiSelectedLeftHand === "W") {
+    // Tie - Both choose Paper
+    resultText = "It's a tie! Both chose Paper.";
+  } else if (selectedRightHand === "D" && aiSelectedLeftHand === "E") {
+    // Tie - Both choose Scissors
+    resultText = "It's a tie! Both chose Scissors.";
+  } else {
+    // AI Wins
+    setAIScore((prev) => prev + 1);
+    if (aiSelectedLeftHand === "Q" && selectedRightHand === "D") {
+      // AI Rock beats Player Scissors
+      resultText = "AI wins! Rock beats Scissors.";
+    } else if (aiSelectedLeftHand === "W" && selectedRightHand === "A") {
+      // AI Paper beats Player Rock
+      resultText = "AI wins! Paper beats Rock.";
+    } else if (aiSelectedLeftHand === "E" && selectedRightHand === "S") {
+      // AI Scissors beats Player Paper
+      resultText = "AI wins! Scissors beats Paper.";
     }
+  }
+}
   
-    // Case 3: Player removed right hand, AI removed left hand
-    if (handToRemove === "A" && aiHandToRemove === "Q") {
-      console.log("Player removed right hand, AI removed left hand.");
-      if (
-        (selectedLeftHand === "Q" && aiSelectedRightHand === "E") || // Rock beats Scissors
-        (selectedLeftHand === "W" && aiSelectedRightHand === "Q") || // Paper beats Rock
-        (selectedLeftHand === "E" && aiSelectedRightHand === "W")    // Scissors beats Paper
-      ) {
-        setPlayerScore((prev) => prev + 1);
-        resultText = "Player wins! Scissors beats Paper.";
-      } else if (selectedLeftHand !== aiSelectedRightHand) {
-        setAIScore((prev) => prev + 1);
-        resultText = "AI wins! Rock beats Scissors.";
-      } else {
-        resultText = "It's a tie!";
-      }
+// Case 3: Player removed right hand, AI removed left hand
+if (handToRemove === "A" && aiHandToRemove === "Q") {
+  console.log("Player removed right hand, AI removed left hand.");
+
+  if (selectedLeftHand === "Q" && aiSelectedRightHand === "D") {
+    // Player Rock, AI Scissors - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Rock beats Scissors.";
+  } else if (selectedLeftHand === "W" && aiSelectedRightHand === "A") {
+    // Player Paper, AI Rock - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Paper beats Rock.";
+  } else if (selectedLeftHand === "E" && aiSelectedRightHand === "S") {
+    // Player Scissors, AI Paper - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Scissors beats Paper.";
+  } else if (selectedLeftHand === "Q" && aiSelectedRightHand === "A") {
+    // Tie - Both choose Rock
+    resultText = "It's a tie! Both chose Rock.";
+  } else if (selectedLeftHand === "W" && aiSelectedRightHand === "S") {
+    // Tie - Both choose Paper
+    resultText = "It's a tie! Both chose Paper.";
+  } else if (selectedLeftHand === "E" && aiSelectedRightHand === "D") {
+    // Tie - Both choose Scissors
+    resultText = "It's a tie! Both chose Scissors.";
+  } else {
+    // AI Wins
+    setAIScore((prev) => prev + 1);
+    if (aiSelectedRightHand === "A" && selectedLeftHand === "E") {
+      // AI Rock beats Player Scissors
+      resultText = "AI wins! Rock beats Scissors.";
+    } else if (aiSelectedRightHand === "S" && selectedLeftHand === "Q") {
+      // AI Paper beats Player Rock
+      resultText = "AI wins! Paper beats Rock.";
+    } else if (aiSelectedRightHand === "D" && selectedLeftHand === "W") {
+      // AI Scissors beats Player Paper
+      resultText = "AI wins! Scissors beats Paper.";
     }
+  }
+} 
   
-    // Case 4: Both players removed their right hands
-    if (handToRemove === "A" && aiHandToRemove === "A") {
-      console.log("Both players removed their right hands.");
-      if (
-        (selectedLeftHand === "Q" && aiSelectedLeftHand === "E") || // Rock beats Scissors
-        (selectedLeftHand === "W" && aiSelectedLeftHand === "Q") || // Paper beats Rock
-        (selectedLeftHand === "E" && aiSelectedLeftHand === "W")    // Scissors beats Paper
-      ) {
-        setPlayerScore((prev) => prev + 1);
-        resultText = "Player wins! Paper beats Rock.";
-      } else if (selectedLeftHand !== aiSelectedLeftHand) {
-        setAIScore((prev) => prev + 1);
-        resultText = "AI wins! Scissors beats Paper.";
-      } else {
-        resultText = "It's a tie!";
-      }
+// Case 4: Both players removed their right hands
+if (handToRemove === "A" && aiHandToRemove === "A") {
+  console.log("Both players removed their right hands.");
+
+  if (selectedLeftHand === "Q" && aiSelectedLeftHand === "E") {
+    // Player Rock, AI Scissors - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Rock beats Scissors.";
+  } else if (selectedLeftHand === "W" && aiSelectedLeftHand === "Q") {
+    // Player Paper, AI Rock - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Paper beats Rock.";
+  } else if (selectedLeftHand === "E" && aiSelectedLeftHand === "W") {
+    // Player Scissors, AI Paper - Player Wins
+    setPlayerScore((prev) => prev + 1);
+    resultText = "Player wins! Scissors beats Paper.";
+  } else if (selectedLeftHand === aiSelectedLeftHand) {
+    // Tie - Both chose the same hand
+    resultText = "It's a tie! Both players chose the same hand.";
+  } else {
+    // AI Wins
+    setAIScore((prev) => prev + 1);
+    if (aiSelectedLeftHand === "Q" && selectedLeftHand === "E") {
+      // AI Rock beats Player Scissors
+      resultText = "AI wins! Rock beats Scissors.";
+    } else if (aiSelectedLeftHand === "W" && selectedLeftHand === "Q") {
+      // AI Paper beats Player Rock
+      resultText = "AI wins! Paper beats Rock.";
+    } else if (aiSelectedLeftHand === "E" && selectedLeftHand === "W") {
+      // AI Scissors beats Player Paper
+      resultText = "AI wins! Scissors beats Paper.";
     }
-  
-    console.log("Result Text:", resultText);
-    setScreenText(resultText); // Update the screen text with the result
-  };
+  }
+}
+
+console.log("Result Text:", resultText);
+setScreenText(resultText); // Update the screen text with the result
+
+}
 
   useEffect(() => {
   if (executeMinusOne && executeAIMinusOne) {
@@ -279,6 +364,9 @@ function GameScreen() {
         }
       });
     }, 1000);
+      //INITIALIZING USER CHOICE
+      setSelectedLeftHand("Q");
+      setSelectedRightHand("A");
     return () => clearInterval(countdownInterval);
   }, []);
 
@@ -301,20 +389,19 @@ function GameScreen() {
     if (playRound && !aiPlayed.current) {
       aiPlayed.current = true; // Ensure AI logic runs only once per round
 
-      // Generate AI Choices
-     // setAISelectedLeftHand();
-     // setAISelectedRightHand();
-
       const aiLeftKey = generateAiChoice(["Q", "W", "E"]);
       const aiRightKey = generateAiChoice(["A", "S", "D"]);
+
+      console.log("AI chose left: " + aiLeftKey)
+      console.log("AI chose right: " + aiRightKey)
 
       setAISelectedLeftHand(aiLeftKey);
       setAISelectedRightHand(aiRightKey);
 
       setTimeout(() => {
      
-       setAILeftHandImage(aiLeftHandImages[aiLeftKey]);
-      setAIRightHandImage(aiRightHandImages[aiRightKey]);
+      setAILeftHandImage(aiRightHandImages[aiRightKey]);
+      setAIRightHandImage(aiLeftHandImages[aiLeftKey]);
       }, 3000);
 
       setTimeout(() => {
