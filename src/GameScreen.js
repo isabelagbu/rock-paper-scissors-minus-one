@@ -125,9 +125,9 @@ function GameScreen() {
   const [executeAIMinusOne, setExecuteAIMinusOne] = useState(false);
   const [aiHandToRemove, setAIHandToRemove] = useState(null);
   const [handToRemove, setHandToRemove] = useState(null);
-  const [rockPaperScissorsHappening, setRockPaperScissorsHappening] = useState(true);
   const [playerScore, setPlayerScore] = useState(0); // Player score state
   const [aiScore, setAIScore] = useState(0); // AI score st
+  const [winner, setWinner] = useState(null); // Winner state
 
   const playerLeftHandImages = {
     Q: "/hands/left_lefthand_rock.png",
@@ -322,17 +322,44 @@ if (handToRemove === "A" && aiHandToRemove === "A") {
 
 console.log("Result Text:", resultText);
 setScreenText(resultText); // Update the screen text with the result
-
 }
 
-  useEffect(() => {
+useEffect(() => {
   if (executeMinusOne && executeAIMinusOne) {
     determineWinner();
-    setExecuteMinusOne(false);
-    setExecuteAIMinusOne(false);
-    setPlayRound(false);
+    if (playerScore >= 3) { 
+      setWinner("Player");
+     setExecuteMinusOne(false);
+     setExecuteAIMinusOne(false);
+      setPlayRound(false); // Stop further rounds
+      setScreenText("Player Wins the Game!");
+    } else if (aiScore >= 3) {
+      setWinner("AI");
+      setExecuteMinusOne(false);
+     setExecuteAIMinusOne(false);
+      setPlayRound(false); // Stop further rounds
+      setScreenText("AI Wins the Game!");
+    } else {
+      // Restart the round
+      setTimeout(() => {
+        resetRound(); // Reset for the next round
+      }, 2000); // 2-second delay before restarting
+    }
   }
 }, [executeMinusOne, executeAIMinusOne]);
+
+  // Reset and start a new round
+  const resetRound = () => {
+    console.log("Resetting for the next round...");
+    setExecuteMinusOne(false);
+    setExecuteAIMinusOne(false);
+    setHandToRemove(null);
+    setAIHandToRemove(null);
+    setScreenText("Make Your Choice");
+    setPlayRound(false);
+    startCountdown(); // Restart countdown for the new round
+  };
+
 
   // AI Logic: Randomly choose from valid keys for each hand
   const generateAiChoice = (choices) => {
@@ -350,39 +377,51 @@ setScreenText(resultText); // Update the screen text with the result
     });
   }
 
+    // Countdown Function
+    const startCountdown = () => {
+      setCountdown(3); // Start countdown at 3
+      const countdownInterval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev > 1) {
+            return prev - 1; // Decrement countdown
+          } else if (prev === 1) {
+            clearInterval(countdownInterval); // Clear interval when countdown ends
+            setCountdown("Go!");
+            setTimeout(() => {
+              setCountdown(null); // Hide "Go!" after 1 second
+              setPlayRound(true); // Start the round
+            }, 1000);
+          }
+          return prev;
+        });
+      }, 1000);
+    };
+  
+
   useEffect(() => {
     playMusic();
-    const countdownInterval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev > 1) return prev - 1;
-        else if (prev === 1) return "Go!";
-        else {
-          clearInterval(countdownInterval);
-          setCountdown(null);
-          setPlayRound(true);
-          playARound();
-        }
-      });
-    }, 1000);
+    startCountdown();
       //INITIALIZING USER CHOICE
       setSelectedLeftHand("Q");
       setSelectedRightHand("A");
-    return () => clearInterval(countdownInterval);
+
   }, []);
 
-  const playARound = () => {
-    setAnimateHands(true);
-    setShowTimer(true);
 
-    setLeftHandImage(playerLeftHandImages[selectedLeftHand] || "/hands/left_lefthand_rock.png");
-    setRightHandImage(playerRightHandImages[selectedRightHand] || "/hands/left_righthand_rock.png");
-  }
 
+
+  
   //HANDLING THE ROCK PAPER SCISSORS PLAYS
   useEffect(() => {
     //PLAYER PLAY
     if (playRound) {
-      playARound();
+      setShowTimer(true);
+      setAnimateHands(true);
+     
+      setLeftHandImage(playerLeftHandImages[selectedLeftHand] || "/hands/left_lefthand_rock.png");
+      setRightHandImage(playerRightHandImages[selectedRightHand] || "/hands/left_righthand_rock.png");
+
+      setAnimateHands(false);
     }
 
     //AI PLAY
@@ -399,7 +438,6 @@ setScreenText(resultText); // Update the screen text with the result
       setAISelectedRightHand(aiRightKey);
 
       setTimeout(() => {
-     
       setAILeftHandImage(aiRightHandImages[aiRightKey]);
       setAIRightHandImage(aiLeftHandImages[aiLeftKey]);
       }, 3000);
