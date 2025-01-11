@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+Rock Paper Scissors Minus One
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Inspired by the strategic tension of Netflix’s Squid Game Season 2, this is a thrilling twist on the classic game of Rock-Paper-Scissors. One option is removed, forcing players into high-stakes decision-making where every choice could be their last!
 
-## Available Scripts
+Technologies Used
+- React
+- HTML
+- CSS
+- Node.js
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Rock Paper Scissors Minus One Rules
+1.	Gameplay Setup:
+	-	Each player (including the AI) uses two hands to play the game.
+	-	Both hands can independently form Rock, Paper, or Scissors.
+2.	Making a Move:
+	-	Players simultaneously reveal their choices for both hands.
+	-	Example:
+	  -	Player: Left hand: Rock, Right hand: Scissors
+	  - AI: Left hand: Paper, Right hand: Scissors
+3.	Minus One Rule:
+    - One hand is removed from the game at random (or by a predefined rule).
+	  -	The remaining hand for each player determines the winner.
+4.	Determine the Winner:
+	  -	The winner is decided using the standard Rock-Paper-Scissors rules:
+	  -	Rock beats Scissors.
+	  -	Scissors beats Paper.
+	  -	Paper beats Rock.
+	  -	If both players have the same hand, it’s a tie.
+5.	Round Format:
+    - The game repeats until a player reaches 3 points.
+  
+How to Run Project locally on PC
+- Ensure Node.js is installed on your computer.
+- Clone or Download the Project
+- Install Dependencies in project directory (npm install)
+- start the app (npm start)
+- navigate to http://localhost:3000
+- Have Fun!
