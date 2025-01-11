@@ -10,24 +10,24 @@ Technologies Used
 
 Rock Paper Scissors Minus One Rules
 1.	Gameplay Setup:
-	-	Each player (including the AI) uses two hands to play the game.
-	-	Both hands can independently form Rock, Paper, or Scissors.
+	        - Each player (including the AI) uses two hands to play the game.
+		- Both hands can independently form Rock, Paper, or Scissors.
 2.	Making a Move:
-	-	Players simultaneously reveal their choices for both hands.
-	-	Example:
-	  -	Player: Left hand: Rock, Right hand: Scissors
-	  - AI: Left hand: Paper, Right hand: Scissors
+		- Players simultaneously reveal their choices for both hands.
+   		  Example:
+	 	- Player: Left hand: Rock, Right hand: Scissors
+		- AI: Left hand: Paper, Right hand: Scissors
 3.	Minus One Rule:
-    - One hand is removed from the game at random (or by a predefined rule).
-	  -	The remaining hand for each player determines the winner.
+   	 	- One hand is removed from the game at random (or by a predefined rule).
+	  	- The remaining hand for each player determines the winner.
 4.	Determine the Winner:
-	  -	The winner is decided using the standard Rock-Paper-Scissors rules:
-	  -	Rock beats Scissors.
-	  -	Scissors beats Paper.
-	  -	Paper beats Rock.
-	  -	If both players have the same hand, it’s a tie.
+   	      - The winner is decided using the standard Rock-Paper-Scissors rules:
+	      - Rock beats Scissors.
+	      - Scissors beats Paper.
+	      - Paper beats Rock.
+	      - If both players have the same hand, it’s a tie.
 5.	Round Format:
-    - The game repeats until a player reaches 3 points.
+              - The game repeats until a player reaches 3 points.
   
 How to Run Project locally on PC
 - Ensure Node.js is installed on your computer.
