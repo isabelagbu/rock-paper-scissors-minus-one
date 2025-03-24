@@ -32,10 +32,10 @@ function MenuScreen() {
             <button onClick={() => handleOptionClick("Single Player")}>
               Single Player
             </button>
-            <button onClick={() => handleOptionClick("Multiplayer")}>
+            <button onClick={() => handleOptionClick("Multiplayer")} disabled>
               Multiplayer
             </button>
-            <button onClick={() => handleOptionClick("LeaderBoard")}>
+            <button onClick={() => handleOptionClick("LeaderBoard")} disabled>
               LeaderBoard
             </button>
             <button onClick={() => handleOptionClick("How To")}>

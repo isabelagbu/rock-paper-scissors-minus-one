@@ -128,6 +128,8 @@ function GameScreen() {
   const [playerScore, setPlayerScore] = useState(0); // Player score state
   const [aiScore, setAIScore] = useState(0); // AI score st
   const [winner, setWinner] = useState(null); // Winner state
+  const robotCountDownSound = useRef(null);
+  const gameMusic = useRef(null);
 
   const playerLeftHandImages = {
     Q: "/hands/left_lefthand_rock.png",
@@ -327,6 +329,14 @@ setScreenText(resultText); // Update the screen text with the result
 useEffect(() => {
   if (executeMinusOne && executeAIMinusOne) {
     determineWinner();
+    if (playerScore >= 3 || aiScore >= 3) {
+      // Stop music
+      if (gameMusic.current) {
+        gameMusic.current.pause();
+        gameMusic.current.currentTime = 0;
+      }
+    }
+    
     if (playerScore >= 3) { 
       setWinner("Player");
      setExecuteMinusOne(false);
@@ -369,13 +379,15 @@ useEffect(() => {
   };
 
   const playMusic = () => {
-    const robotCountDownSound = new Audio("/robot.mp3");
-    const gameMusic = new Audio("/squid_game.mp3");
-    robotCountDownSound.play();
-    robotCountDownSound.addEventListener("ended", () => {
-      gameMusic.play();
+    robotCountDownSound.current = new Audio("/robot.mp3");
+    gameMusic.current = new Audio("/squid_game.mp3");
+    gameMusic.current.loop = true; // Keep music looping
+  
+    robotCountDownSound.current.play();
+    robotCountDownSound.current.addEventListener("ended", () => {
+      gameMusic.current.play();
     });
-  }
+  };
 
     // Countdown Function
     const startCountdown = () => {
